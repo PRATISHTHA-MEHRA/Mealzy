@@ -1,0 +1,154 @@
+.navbar {
+    padding: 10px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    /* Your background choice from earlier (example: warm beige glass) */
+    background: rgba(215, 178, 140, 0.85); 
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px); 
+    
+    box-shadow: 0 8px 24px rgba(200, 180, 150, 0.15); /* Slightly larger shadow for floating effect */
+    position: sticky;
+    z-index: 50;
+
+    top: 20px; 
+    margin-top: 20px; 
+    margin-left: 24px; 
+    margin-right: 24px; 
+    border-radius: 16px; 
+    border: 1px solid rgba(255, 255, 255, 0.5); 
+}
+
+
+.navbar .logo {
+    width: auto;
+    max-height: 38px;
+    object-fit: contain;
+}
+
+
+.navbar-menu {
+    display: flex;
+    gap: 22px;
+    list-style: none;
+    color: #152347; /* High contrast dark blue */
+    font-size: 16px;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-menu li {
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 150ms ease-out;
+}
+
+.navbar-menu li:hover {
+    background: rgba(21, 35, 71, 0.05); /* Slight dark tint on hover */
+    transform: translateY(-2px);
+}
+
+
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* Icons (Black icons will show up perfectly) */
+.navbar-right img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    display: inline-block;
+}
+
+/* Icon Wrapper */
+.navbar-search-icon {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 8px;
+    transition: background-color 150ms ease-out;
+}
+
+.navbar-search-icon:hover {
+    background-color: rgba(21, 35, 71, 0.05);
+}
+
+/* Notification Dot */
+.dot {
+    position: absolute;
+    top: 4px;
+    right: 2px;
+    width: 10px;
+    height: 10px;
+    background: #ff4d4f;
+    border-radius: 50%;
+    /* Creates a 2px white ring around the dot to separate it from the icon */
+    box-shadow: 0 0 0 2px #ffffff; 
+}
+
+/* Sign-in Button (Vibrant Appetizing Orange) */
+.navbar-right button {
+    background: linear-gradient(to right, #ff7a45, #ff4d4f);
+    color: #ffffff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(255, 77, 79, 0.2);
+    transition: all 150ms ease-out;
+}
+
+.navbar-right button:hover {
+    transform: translateY(-2px);
+    opacity: 0.95;
+    box-shadow: 0 8px 22px rgba(255, 77, 79, 0.3);
+}
+
+.navbar .active {
+    color: #ff4d4f; /* Active menu item in vibrant red */
+    font-weight: 600;
+}
+
+
+@media (max-width: 820px) {
+    .navbar {
+        padding: 12px 16px;
+    }
+    .navbar-menu {
+        gap: 12px;
+        font-size: 15px;
+    }
+    .navbar .logo {
+        max-height: 32px;
+    }
+    .navbar-right img {
+        width: 24px;
+        height: 24px;
+    }
+    .navbar-right button {
+        padding: 7px 10px;
+        border-radius: 8px;
+    }
+}
+
+@media (max-width: 520px) {
+    .navbar-menu {
+        display: none;
+    }
+    .app {
+        width: 92%;
+        margin: 0 auto; /* Centers the app wrapper */
+    }
+}
