@@ -1,26 +1,48 @@
-import React from 'react'
-import { Route, Routes } from 'react-router-dom'
-import Home from './pages/Home'
-import ContactPage from './pages/ContactPage/ContactPage'
-import AboutPage from './pages/AboutPages/AboutPage'
-import Menu from './pages/Menu/Menu'
-import Cart from './pages/Cart/Cart'
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import Home from './pages/Home/home';
+import Cart from './pages/Cart/Cart';
+import SignUp from './components/SignUp/SignUp';
+import ContactPage from './pages/ContactPage/ContactPage';
+import CheckoutPage from './pages/Checkout/Checkout';
+import AboutPage from './pages/AboutPage/AboutPage';
+import Menu from './pages/Menu/Menu';
+import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 
+import MyOrders from './pages/MyOrders/MyOrders';
+import VerifyPaymentPage from './pages/VerifyPaymentPage/VerifyPaymentPage';
 
-
-const App = () => {
+function App() {
   return (
-  <Routes>
-    <Route path='/' element={<Home/>}/>
-    <Route path='/contact' element={<ContactPage/>}/>
-    <Route path='/about' element={<AboutPage/>}/>
-    <Route path='/menu' element={<Menu/>}/>
-    <Route path='/cart' element={<Cart/>}/>
-    
+    <Routes>
+      {/* Public */}
+      <Route path="/" element={<Home />} />
+      <Route path="/signup" element={<SignUp />} />
+      <Route path="/login" element={<Home />} />
+      <Route path="/contact" element={<ContactPage />} />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/menu" element={<Menu />} />
 
+      {/* Payment verification */}
+      <Route path="/myorder/verify" element={<VerifyPaymentPage />} />
 
-  </Routes>
-  )
+      {/* Protected */}
+      <Route
+        path="/cart"
+        element={<PrivateRoute><Cart /></PrivateRoute>}
+      />
+      <Route
+        path="/checkout"
+        element={<PrivateRoute><CheckoutPage /></PrivateRoute>}
+      />
+
+      {/* The actual orders list */}
+      <Route
+        path="/myorder"
+        element={<PrivateRoute><MyOrders /></PrivateRoute>}
+      />
+    </Routes>
+  );
 }
 
-export default App
+export default App;

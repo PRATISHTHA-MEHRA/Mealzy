@@ -1,15 +1,15 @@
 import React from 'react'
 import Navbar from '../../components/Navbar/Navbar'
-import OurMenu from '../../components/OurMenu/OurMenu'
 import Footer from '../../components/Footer/Footer'
-const Menu = () => {
+import CheckoutMe from "../../components/Checkout/Checkout"
+const Checkout = () => {
     return (
         <>
             <Navbar />
-            <OurMenu />
+            <CheckoutMe />
             <Footer />
         </>
     )
 }
 
-export default Menu
+export default Checkout
