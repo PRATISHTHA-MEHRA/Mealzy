@@ -1,9 +1,6 @@
 // controllers/orderController.js
-import Stripe from 'stripe';
-import Order from '../modals/order.js';
+import Order from '../modals/order.js'; 
 import 'dotenv/config';
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // Create Order
 export const createOrder = async (req, res) => {
@@ -34,86 +31,37 @@ export const createOrder = async (req, res) => {
 
         // Default shipping cost
         const shippingCost = 0;
-        let newOrder;
 
-        if (paymentMethod === 'online') {
-            const session = await stripe.checkout.sessions.create({
-                payment_method_types: ['card'],
-                mode: 'payment',
-                line_items: orderItems.map(o => ({
-                    price_data: {
-                        currency: 'inr',
-                        product_data: { name: o.item.name },
-                        unit_amount: Math.round(o.item.price * 100)
-                    },
-                    quantity: o.quantity
-                })),
-                customer_email: email,
-                success_url: `${process.env.FRONTEND_URL}/myorder/verify?success=true&session_id={CHECKOUT_SESSION_ID}`,
-                cancel_url: `${process.env.FRONTEND_URL}/checkout?payment_status=cancel`,
-                metadata: { firstName, lastName, email, phone }
-            });
-
-            newOrder = new Order({
-                user: req.user._id,
-                firstName, lastName, phone, email,
-                address, city, zipCode,
-                paymentMethod, subtotal, tax, total,
-                shipping: shippingCost,
-                items: orderItems,
-                paymentIntentId: session.payment_intent,
-                sessionId: session.id,
-                paymentStatus: 'pending'
-            });
-
-            await newOrder.save();
-            return res.status(201).json({ order: newOrder, checkoutUrl: session.url });
-        }
+       
+        const actualPaymentMethod = paymentMethod === 'online' ? 'cod' : paymentMethod;
 
         // COD Handling
-        newOrder = new Order({
+        const newOrder = new Order({
             user: req.user._id,
             firstName, lastName, phone, email,
             address, city, zipCode,
-            paymentMethod, subtotal, tax, total,
+            paymentMethod: actualPaymentMethod, 
+            subtotal, tax, total,
             shipping: shippingCost,
             items: orderItems,
-            paymentStatus: 'succeeded'
+            paymentStatus: 'pending' // Initially pending until delivered
         });
 
         await newOrder.save();
         res.status(201).json({ order: newOrder, checkoutUrl: null });
+        
     } catch (error) {
         console.error('createOrder error:', error);
-        // ...error handling unchanged...
         res.status(500).json({ message: 'Server Error', error: error.message });
     }
 };
 
-// Confirm Payment
-export const confirmPayment = async (req, res) => {
-    try {
-        const { session_id } = req.query;
-        if (!session_id) return res.status(400).json({ message: 'session_id required' });
 
-        const session = await stripe.checkout.sessions.retrieve(session_id);
-        if (session.payment_status === 'paid') {
-            const order = await Order.findOneAndUpdate(
-                { sessionId: session_id },
-                { paymentStatus: 'succeeded' },
-                { new: true }
-            );
-            if (!order) return res.status(404).json({ message: 'Order not found' });
-            return res.json(order);
-        }
-        return res.status(400).json({ message: 'Payment not completed' });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Server Error', error: err.message });
-    }
+export const confirmPayment = async (req, res) => {
+    res.status(200).json({ message: 'Orders default to COD.' });
 };
 
-// Get Orders
+// Get Orders (User specific)
 export const getOrders = async (req, res) => {
     try {
         // only return orders belonging to this user
@@ -139,6 +87,7 @@ export const getOrders = async (req, res) => {
     }
 };
 
+// Get All Orders (Admin use)
 export const getAllOrders = async (req, res) => {
     try {
         const raw = await Order
@@ -154,7 +103,6 @@ export const getAllOrders = async (req, res) => {
             email: o.email,
             phone: o.phone,
 
-            // ← ADD these three:
             address: o.address ?? o.shippingAddress?.address ?? '',
             city: o.city ?? o.shippingAddress?.city ?? '',
             zipCode: o.zipCode ?? o.shippingAddress?.zipCode ?? '',
@@ -178,8 +126,7 @@ export const getAllOrders = async (req, res) => {
     }
 };
 
-
-// NEW: updateAnyOrder — no ownership check
+// Update Any Order (Admin use) — no ownership check
 export const updateAnyOrder = async (req, res) => {
     try {
         const updated = await Order.findByIdAndUpdate(
@@ -196,7 +143,6 @@ export const updateAnyOrder = async (req, res) => {
         res.status(500).json({ message: 'Server Error', error: error.message });
     }
 };
-
 
 // Get Order by ID
 export const getOrderById = async (req, res) => {
@@ -218,7 +164,7 @@ export const getOrderById = async (req, res) => {
     }
 };
 
-// Update Order
+// Update Order (User use)
 export const updateOrder = async (req, res) => {
     try {
         const order = await Order.findById(req.params.id);

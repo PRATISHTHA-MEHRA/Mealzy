@@ -1,23 +1,41 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { FaStar, FaHeart } from 'react-icons/fa';
-import { HiMinus, HiPlus } from 'react-icons/hi';
+import { HiMinus, HiPlus } from 'react-icons/hi'; 
+import { HiOutlineMinus, HiOutlinePlus } from 'react-icons/hi2'; 
 import { useCart } from '../../CartContext/CartContext';
+
+import { cardData, additionalData } from '../../assets/dummydata';
 
 const SpecialOffer = () => {
   const [showAll, setShowAll] = useState(false);
   const [items, setItems] = useState([]);
   const { addToCart, updateQuantity, removeFromCart, cartItems: rawCart } = useCart();
 
-  // only keep cart entries with a real `item`
+
   const cartItems = rawCart.filter(ci => ci.item);
 
-  // Fetch menu items
+  // Load and normalize dummy data
   useEffect(() => {
-    axios
-      .get('http://localhost:4000/api/items')
-      .then(res => setItems(res.data.items ?? res.data))
-      .catch(err => console.error(err));
+    const localItems = [...cardData, ...additionalData];
+
+    const normalizedItems = localItems.map(item => {
+      // Clean price string (e.g., "₹240" -> 240)
+      const cleanPrice = typeof item.price === 'string' 
+        ? Number(item.price.replace('₹', '')) 
+        : item.price;
+
+      return {
+        _id: item.id.toString(), // Match database ID format string
+        name: item.title,
+        description: item.description,
+        price: cleanPrice,
+        image: item.image,
+        rating: item.rating,
+        hearts: item.hearts
+      };
+    });
+
+    setItems(normalizedItems);
   }, []);
 
   const displayList = Array.isArray(items) ? items.slice(0, showAll ? 8 : 4) : [];
@@ -46,25 +64,26 @@ const SpecialOffer = () => {
             return (
               <div
                 key={item._id}
-                className="group bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col"
+                className="group bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-md transition-all duration-300 flex flex-col"
               >
-                {/* Image & Badges */}
-                <div className="relative h-56 bg-slate-100 overflow-hidden">
+                {/* Image Container with Absolute Badges */}
+                <div className="relative h-48 bg-slate-50 flex items-center justify-center p-4 overflow-hidden">
                   <img
-                    src={item.imageUrl || item.image}
+                    src={item.image}
                     alt={item.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="max-h-full max-w-full object-contain drop-shadow-sm transition-transform duration-500 group-hover:scale-105"
                   />
+                  
                   {/* Rating & Likes Badges */}
                   <div className="absolute top-3 left-3 flex gap-2">
                     {item.rating && (
                       <span className="flex items-center gap-1 bg-white/90 backdrop-blur-sm text-slate-700 text-xs font-bold px-2 py-1 rounded-full shadow-sm">
-                        <FaStar className="text-yellow-400" /> {item.rating}
+                        <FaStar className="text-yellow-400 text-xs" /> {item.rating}
                       </span>
                     )}
                     {item.hearts && (
                       <span className="flex items-center gap-1 bg-white/90 backdrop-blur-sm text-slate-700 text-xs font-bold px-2 py-1 rounded-full shadow-sm">
-                        <FaHeart className="text-rose-400" /> {item.hearts}
+                        <FaHeart className="text-rose-400 text-xs" /> {item.hearts}
                       </span>
                     )}
                   </div>
@@ -81,7 +100,7 @@ const SpecialOffer = () => {
                   
                   <div className="mt-auto flex items-center justify-between">
                     <span className="text-xl font-bold text-slate-900">
-                      ₹{Number(item.price).toFixed(2)}
+                      ₹{item.price.toFixed(2)}
                     </span>
 
                     <div>
@@ -95,7 +114,7 @@ const SpecialOffer = () => {
                             }
                             className="w-7 h-7 rounded-full bg-white border border-slate-200 flex items-center justify-center hover:text-rose-500 hover:border-rose-500 transition-colors shadow-sm"
                           >
-                            <HiMinus className="text-sm" />
+                            <span className="text-sm font-bold">-</span>
                           </button>
                           <span className="w-4 text-center font-medium text-slate-700">
                             {qty}
@@ -104,7 +123,7 @@ const SpecialOffer = () => {
                             onClick={() => updateQuantity(cartId, qty + 1)}
                             className="w-7 h-7 rounded-full bg-white border border-slate-200 flex items-center justify-center hover:text-rose-500 hover:border-rose-500 transition-colors shadow-sm"
                           >
-                            <HiPlus className="text-sm" />
+                            <span className="text-sm font-bold">+</span>
                           </button>
                         </div>
                       ) : (
@@ -128,7 +147,7 @@ const SpecialOffer = () => {
           <div className="flex justify-center">
             <button
               onClick={() => setShowAll(!showAll)}
-              className="px-8 py-3 bg-white border-2 border-slate-200 text-slate-700 font-medium rounded-full hover:border-rose-500 hover:text-rose-500 transition-colors active:scale-95"
+              className="px-8 py-3 bg-white border-2 border-slate-200 text-slate-700 font-medium rounded-full hover:border-rose-500 hover:text-rose-500 transition-colors shadow-sm hover:shadow-md"
             >
               {showAll ? 'Show Less' : 'View All Offers'}
             </button>

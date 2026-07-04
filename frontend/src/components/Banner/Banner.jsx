@@ -24,7 +24,7 @@ const SimpleBanner = () => {
             Discover the best local restaurants. Hot, tasty food delivered right to your door in under 60 minutes.
           </p>
 
-          {/* Simplified Search Bar */}
+          {/*Search Bar */}
           <form onSubmit={handleSearch} className="max-w-md mx-auto md:mx-0 pt-4">
             <div className="flex items-center bg-white rounded-full border border-slate-200 shadow-sm overflow-hidden p-1 focus-within:ring-2 focus-within:ring-rose-200 focus-within:border-rose-400 transition-all">
               <div className="pl-4 pr-2">
