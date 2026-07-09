@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useCart } from '../../CartContext/CartContext';
 import { FaMinus, FaPlus } from 'react-icons/fa';
-
+// Import local menu arrays from your dummydata file
+import { cardData, additionalData } from '../../assets/dummydata';
 
 const categories = ['Breakfast', 'Lunch', 'Dinner', 'Mexican', 'Italian', 'Desserts', 'Drinks'];
 
@@ -14,53 +14,129 @@ const OurMenu = () => {
   const cartItems = rawCart.filter(ci => ci.item);
 
   useEffect(() => {
-    const fetchMenu = async () => {
-      try {
-        const res = await axios.get('http://localhost:4000/api/items');
-        const byCategory = res.data.reduce((acc, item) => {
-          const cat = item.category || 'Uncategorized';
-          acc[cat] = acc[cat] || [];
-          acc[cat].push(item);
-          return acc;
-        }, {});
-        setMenuData(byCategory);
-      } catch (err) {
-        console.error('Failed to load menu items:', err);
+    // Combine both arrays from your dummydata
+    const localItems = [...cardData, ...additionalData];
+    const normalizedItems = [];
+
+    // Distribute and repeat items to ensure all 7 categories have content
+    localItems.forEach((item) => {
+      const cleanPrice = typeof item.price === 'string' 
+        ? Number(item.price.replace('₹', '')) 
+        : item.price;
+
+      const baseItem = {
+        _id: item.id.toString(),
+        name: item.title,
+        description: item.description,
+        price: cleanPrice,
+        image: item.image,
+      };
+
+      // 1. BREAKFAST POPULATION
+      if (item.title === 'Mysore Masala Dosa') {
+        normalizedItems.push({ ...baseItem, _id: `${item.id}-bf`, category: 'Breakfast' });
       }
-    };
-    fetchMenu();
+
+      // 2. LUNCH POPULATION
+      if (item.title === 'Lucknowi Kebab' || item.title === 'Amritsari Paneer Tikka' || item.title === 'Desi Street Chowmein') {
+        normalizedItems.push({ ...baseItem, _id: `${item.id}-lh`, category: 'Lunch' });
+      }
+
+      // 3. DINNER POPULATION
+      if (item.title === 'Punjabi Chicken Tikka' || item.title === 'Dhaba Style Palak Paneer' || item.title === 'Lahori Chargha') {
+        normalizedItems.push({ ...baseItem, _id: `${item.id}-dn`, category: 'Dinner' });
+      }
+
+      // 4. MEXICAN FUSION POPULATION (Repeating/modifying items to fit context)
+      if (item.title === 'Lucknowi Kebab') {
+        normalizedItems.push({ 
+          ...baseItem, 
+          _id: `${item.id}-mex`, 
+          name: 'Kebab Loaded Quesadilla', 
+          description: 'Spicy minced meat folded in a crisp tortilla with cheese',
+          category: 'Mexican' 
+        });
+      }
+
+      // 5. ITALIAN FUSION POPULATION
+      if (item.title === 'Amritsari Paneer Tikka') {
+        normalizedItems.push({ 
+          ...baseItem, 
+          _id: `${item.id}-ita`, 
+          name: 'Tandoori Paneer Pizza Chunks', 
+          description: 'Paneer tikka tossed in classic Italian herbs and cheese sauce',
+          category: 'Italian' 
+        });
+      }
+      if (item.title === 'Desi Street Chowmein') {
+        normalizedItems.push({ 
+          ...baseItem, 
+          _id: `${item.id}-ita2`, 
+          name: 'Spicy Street Arabbiata Pasta Noodles', 
+          description: 'Indo-Italian fusion noodles cooked with local garlic and chili spices',
+          category: 'Italian' 
+        });
+      }
+
+      // 6. DESSERTS POPULATION
+      if (item.title === 'Saffron Gulab Jamun') {
+        normalizedItems.push({ ...baseItem, _id: `${item.id}-des`, category: 'Desserts' });
+      }
+
+      // 7. DRINKS POPULATION
+      if (item.title === 'Saffron Gulab Jamun') {
+        normalizedItems.push({ 
+          ...baseItem, 
+          _id: `${item.id}-drk`, 
+          name: 'Premium Saffron Masala Lassi', 
+          description: 'Thick, refreshing traditional yogurt drink infused with saffron strands',
+          price: 80,
+          category: 'Drinks' 
+        });
+      }
+    });
+
+    // Group everything cleanly into the categorized object structure
+    const byCategory = normalizedItems.reduce((acc, item) => {
+      const cat = item.category;
+      acc[cat] = acc[cat] || [];
+      acc[cat].push(item);
+      return acc;
+    }, {});
+
+    setMenuData(byCategory);
   }, []);
 
-  // helper: find cart entry by product ID
+  // Helper: find cart entry by product ID
   const getCartEntry = id => cartItems.find(ci => ci.item?._id === id);
-  const getQuantity  = id => getCartEntry(id)?.quantity ?? 0;
 
-  // items to display in active category
+  // Items to display in active category
   const displayItems = (menuData[activeCategory] ?? []).slice(0, 12);
 
   return (
-    <div className="bg-gradient-to-br from-[#1a120b] via-[#2a1e14] to-[#3e2b1d] min-h-screen py-16 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="bg-slate-50 min-h-screen py-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto">
+        
         {/* Title */}
-        <h2 className="text-center mb-12 bg-clip-text text-transparent bg-gradient-to-r from-amber-200 via-amber-300 to-amber-200">
-          <span className="font-dancingscript block text-5xl sm:text-6xl md:text-7xl mb-2">
-            Our Exquisite Menu
-          </span>
-          <span className="block text-xl sm:text-2xl md:text-3xl font-cinzel mt-4 text-amber-100/80">
-            A Symphony of Flavors
-          </span>
-        </h2>
+        <div className="text-center mb-10">
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight">
+            Our Menu<span className="text-rose-500">.</span>
+          </h2>
+          <p className="text-slate-500 mt-3 text-lg">
+            Fresh, fast, and authentic dishes right to your doorstep.
+          </p>
+        </div>
 
         {/* Category Tabs */}
-        <div className="flex flex-wrap justify-center gap-4 mb-16">
+        <div className="flex flex-wrap justify-center gap-3 mb-12">
           {categories.map(cat => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`px-4 sm:px-6 py-2 rounded-full border-2 transition-all duration-300 transform font-cinzel text-sm sm:text-lg tracking-widest backdrop-blur-sm ${
+              className={`px-5 py-2.5 rounded-full text-sm font-medium transition-colors ${
                 activeCategory === cat
-                  ? 'bg-gradient-to-br from-amber-900/80 to-amber-700/80 border-amber-800 scale-105 shadow-xl shadow-amber-900/30'
-                  : 'bg-amber-900/20 border-amber-800/30 text-amber-100/80 hover:bg-amber-800/40 hover:scale-95'
+                  ? 'bg-rose-500 text-white shadow-md'
+                  : 'bg-white text-slate-600 border border-slate-200 hover:border-rose-500 hover:text-rose-500'
               }`}
             >
               {cat}
@@ -69,80 +145,85 @@ const OurMenu = () => {
         </div>
 
         {/* Menu Grid */}
-        <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
-          {displayItems.map((item, i) => {
-            const cartEntry = getCartEntry(item._id);
-            const quantity  = cartEntry?.quantity || 0;
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {displayItems.length === 0 ? (
+            <div className="col-span-full text-center py-12 text-slate-400 font-medium">
+              No items available in this category yet.
+            </div>
+          ) : (
+            displayItems.map((item) => {
+              const cartEntry = getCartEntry(item._id);
+              const quantity = cartEntry?.quantity || 0;
 
-            return (
-              <div
-                key={item._id}
-                className="relative bg-amber-900/20 rounded-2xl overflow-hidden border border-amber-800/30 backdrop-blur-sm flex flex-col transition-all duration-500"
-                style={{ '--index': i }}
-              >
-                {/* Image */}
-                <div className="relative h-48 sm:h-56 md:h-60 flex items-center justify-center bg-black/10">
-                  <img
-                    src={item.imageUrl || item.image}
-                    alt={item.name}
-                    className="max-h-full max-w-full object-contain transition-all duration-700"
-                  />
-                </div>
+              return (
+                <div
+                  key={item._id}
+                  className="bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col"
+                >
+                  {/* Image Container */}
+                  <div className="h-48 bg-slate-50 flex items-center justify-center p-4 overflow-hidden">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="max-h-full max-w-full object-contain drop-shadow-sm transition-transform duration-500 hover:scale-105"
+                    />
+                  </div>
 
-                {/* Details */}
-                <div className="p-4 sm:p-6 flex flex-col flex-grow">
-                  <h3 className="text-xl sm:text-2xl mb-2 font-dancingscript text-amber-100">
-                    {item.name}
-                  </h3>
-                  <p className="text-amber-100/80 text-xs sm:text-sm mb-4 font-cinzel leading-relaxed">
-                    {item.description}
-                  </p>
+                  {/* Details */}
+                  <div className="p-5 flex flex-col flex-grow">
+                    <h3 className="text-lg font-bold text-slate-900 mb-1">
+                      {item.name}
+                    </h3>
+                    <p className="text-slate-500 text-sm mb-4 line-clamp-2">
+                      {item.description}
+                    </p>
 
-                  {/* Price & Cart Controls */}
-                  <div className="mt-auto flex items-center gap-4 justify-between">
-                    <div className="bg-amber-100/10 backdrop-blur-sm px-3 py-1 rounded-2xl shadow-lg">
-                      <span className="text-xl font-bold text-amber-300 font-dancingscript">
-                        ₹{Number(item.price).toFixed(2)}
+                    {/* Price & Cart Controls */}
+                    <div className="mt-auto flex items-center justify-between">
+                      <span className="text-xl font-bold text-slate-900">
+                        ₹{item.price.toFixed(2)}
                       </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {quantity > 0 ? (
-                        <>
+                      
+                      <div>
+                        {quantity > 0 ? (
+                          <div className="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-full px-2 py-1">
+                            <button
+                              onClick={() =>
+                                quantity > 1
+                                  ? updateQuantity(cartEntry?._id, quantity - 1)
+                                  : removeFromCart(cartEntry._id)
+                              }
+                              className="w-7 h-7 rounded-full bg-white border border-slate-200 flex items-center justify-center hover:text-rose-500 hover:border-rose-500 transition-colors shadow-sm"
+                            >
+                              <FaMinus className="text-xs" />
+                            </button>
+                            <span className="w-4 text-center font-medium text-slate-700">
+                              {quantity}
+                            </span>
+                            <button
+                              onClick={() => updateQuantity(cartEntry._id, quantity + 1)}
+                              className="w-7 h-7 rounded-full bg-white border border-slate-200 flex items-center justify-center hover:text-rose-500 hover:border-rose-500 transition-colors shadow-sm"
+                            >
+                              <FaPlus className="text-xs" />
+                            </button>
+                          </div>
+                        ) : (
                           <button
-                            onClick={() =>
-                              quantity > 1
-                                ? updateQuantity(cartEntry?._id, quantity - 1)
-                                : removeFromCart(cartEntry._id)
-                            }
-                            className="w-8 h-8 rounded-full bg-amber-900/40 flex items-center justify-center hover:bg-amber-800/50 transition-colors"
+                            onClick={() => addToCart(item, 1)}
+                            className="bg-rose-50 px-4 py-2 rounded-full text-rose-600 font-medium text-sm hover:bg-rose-500 hover:text-white transition-colors"
                           >
-                            <FaMinus className="text-amber-100" />
+                            Add to Cart
                           </button>
-                          <span className="w-8 text-center text-amber-100">
-                            {quantity}
-                          </span>
-                          <button
-                            onClick={() => updateQuantity(cartEntry._id, quantity + 1)}
-                            className="w-8 h-8 rounded-full bg-amber-900/40 flex items-center justify-center hover:bg-amber-800/50 transition-colors"
-                          >
-                            <FaPlus className="text-amber-100" />
-                          </button>
-                        </>
-                      ) : (
-                        <button
-                          onClick={() => addToCart(item, 1)}
-                          className="bg-amber-900/40 px-4 py-1.5 rounded-full font-cinzel text-xs sm:text-sm uppercase tracking-widest transition-transform duration-300 hover:scale-110 hover:shadow-lg hover:shadow-amber-900/20 overflow-hidden border border-amber-800/50"
-                        >
-                          Add to Cart
-                        </button>
-                      )}
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })
+          )}
         </div>
+        
       </div>
     </div>
   );
