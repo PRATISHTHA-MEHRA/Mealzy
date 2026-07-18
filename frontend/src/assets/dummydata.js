@@ -10,6 +10,13 @@ import IA3 from './IA3.png';
 import IA4 from './IA4.png';
 import IA5 from './IA5.png';
 import IA6 from './IA6.png';
+import IA7 from './IA7.png';
+
+
+
+
+
+
 
 import Kebab from "./Kebab.png";
 import ChickenTikka from "./ChickenTikka.png";
@@ -99,7 +106,7 @@ export const teamMembers = [
     {
         name: "Chef Akash Trivedi",
         role: "Regional Cuisine Expert",
-        img: IA6,
+        img: IA7,
         bio: "Bringing authentic South Indian coastal flavors and traditional spice blends exclusively to Mealzy.",
         delay: 0.5
         

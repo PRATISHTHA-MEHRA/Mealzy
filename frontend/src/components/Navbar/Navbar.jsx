@@ -15,6 +15,16 @@ import {
 import Login from '../Login/Login';
 import { useCart } from '../../CartContext/CartContext';
 
+/**
+ * Mealzy — Navbar
+ * -----------------------------------------------------------------
+ * Same palette as About.jsx / Contact.jsx: forest green (#2F4A3C) as
+ * the primary interactive color, brick (#B84A32) reserved for the
+ * cart badge and the primary CTA, so it still pops against the green.
+ * Logic (auth, cart count, login modal) is unchanged — only classes
+ * moved off rose-*.
+ */
+
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { totalItems } = useCart();
@@ -27,7 +37,6 @@ const Navbar = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
-    // Show modal if the route is /login, otherwise hide it
     setShowLoginModal(location.pathname === '/login');
     setIsAuthenticated(Boolean(localStorage.getItem('loginData')));
   }, [location.pathname]);
@@ -52,14 +61,19 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+    <nav className="bg-[#F7F3E8] border-b border-[#20261F]/10 sticky top-0 z-50">
+      <style>{`
+        .font-display { font-family: 'Fraunces', Georgia, serif; }
+        .font-body { font-family: 'Work Sans', system-ui, sans-serif; }
+        .font-ticket { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
+      `}</style>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
-          
+
           {/* Logo Section */}
           <NavLink to="/" className="flex-shrink-0 flex items-center gap-1 group">
-            <h1 className="text-3xl font-bold text-slate-900 tracking-tight transition-transform group-hover:scale-105">
-              Mealzy<span className="text-rose-500">.</span>
+            <h1 className="font-display text-3xl font-bold text-[#20261F] tracking-tight transition-transform group-hover:scale-105">
+              Mealzy<span className="text-[#B84A32]">.</span>
             </h1>
           </NavLink>
 
@@ -70,10 +84,10 @@ const Navbar = () => {
                 key={link.name}
                 to={link.href}
                 className={({ isActive }) =>
-                  `px-4 py-2 flex items-center space-x-2 rounded-full font-medium transition-colors
-                  ${isActive 
-                    ? 'bg-rose-50 text-rose-600' 
-                    : 'text-slate-600 hover:bg-slate-50 hover:text-rose-500'}`
+                  `font-body px-4 py-2 flex items-center space-x-2 rounded-full font-medium transition-colors
+                  ${isActive
+                    ? 'bg-[#2F4A3C]/10 text-[#2F4A3C]'
+                    : 'text-[#4A6154] hover:bg-[#2F4A3C]/5 hover:text-[#2F4A3C]'}`
                 }
               >
                 <span className="text-lg">{link.icon}</span>
@@ -86,11 +100,11 @@ const Navbar = () => {
           <div className="hidden lg:flex items-center space-x-6">
             <NavLink
               to="/cart"
-              className="relative p-2 text-slate-600 hover:text-rose-500 transition-colors"
+              className="relative p-2 text-[#4A6154] hover:text-[#2F4A3C] transition-colors"
             >
               <FiShoppingCart className="text-2xl" />
               {totalItems > 0 && (
-                <span className="absolute top-0 right-0 bg-rose-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">
+                <span className="font-ticket absolute top-0 right-0 bg-[#B84A32] text-[#F7F3E8] text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-[#F7F3E8]">
                   {totalItems}
                 </span>
               )}
@@ -99,7 +113,7 @@ const Navbar = () => {
             {isAuthenticated ? (
               <button
                 onClick={handleLogout}
-                className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full font-semibold transition-colors flex items-center space-x-2"
+                className="font-body px-5 py-2.5 bg-[#20261F]/5 hover:bg-[#20261F]/10 text-[#20261F] rounded-full font-semibold transition-colors flex items-center space-x-2"
               >
                 <FiLogOut />
                 <span>Logout</span>
@@ -107,7 +121,7 @@ const Navbar = () => {
             ) : (
               <button
                 onClick={() => navigate('/login')}
-                className="px-5 py-2.5 bg-rose-500 hover:bg-rose-600 text-white rounded-full font-semibold transition-colors shadow-sm flex items-center space-x-2"
+                className="font-body px-5 py-2.5 bg-[#B84A32] hover:bg-[#9E3E29] text-[#F7F3E8] rounded-full font-semibold transition-colors flex items-center space-x-2"
               >
                 <FiUser />
                 <span>Login</span>
@@ -117,17 +131,17 @@ const Navbar = () => {
 
           {/* Mobile Menu Toggle Button */}
           <div className="lg:hidden flex items-center gap-4">
-            <NavLink to="/cart" className="relative p-2 text-slate-600">
+            <NavLink to="/cart" className="relative p-2 text-[#4A6154]">
               <FiShoppingCart className="text-2xl" />
               {totalItems > 0 && (
-                <span className="absolute top-0 right-0 bg-rose-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">
+                <span className="font-ticket absolute top-0 right-0 bg-[#B84A32] text-[#F7F3E8] text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-[#F7F3E8]">
                   {totalItems}
                 </span>
               )}
             </NavLink>
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-slate-600 hover:text-rose-500 p-2 focus:outline-none"
+              className="text-[#4A6154] hover:text-[#2F4A3C] p-2 focus:outline-none"
             >
               {isOpen ? <FiX className="text-2xl" /> : <FiMenu className="text-2xl" />}
             </button>
@@ -137,7 +151,7 @@ const Navbar = () => {
 
       {/* Mobile/Tablet Menu */}
       {isOpen && (
-        <div className="lg:hidden bg-white border-t border-slate-100 shadow-lg absolute w-full">
+        <div className="lg:hidden bg-[#F7F3E8] border-t border-[#20261F]/10 shadow-lg absolute w-full">
           <div className="px-4 py-4 space-y-2">
             {navLinks.map((link) => (
               <NavLink
@@ -145,20 +159,20 @@ const Navbar = () => {
                 to={link.href}
                 onClick={() => setIsOpen(false)}
                 className={({ isActive }) =>
-                  `flex items-center space-x-3 px-4 py-3 rounded-xl font-medium transition-colors
-                  ${isActive ? 'bg-rose-50 text-rose-600' : 'text-slate-600 hover:bg-slate-50'}`
+                  `font-body flex items-center space-x-3 px-4 py-3 rounded-xl font-medium transition-colors
+                  ${isActive ? 'bg-[#2F4A3C]/10 text-[#2F4A3C]' : 'text-[#4A6154] hover:bg-[#20261F]/5'}`
                 }
               >
                 <span className="text-xl">{link.icon}</span>
                 <span>{link.name}</span>
               </NavLink>
             ))}
-            
-            <div className="pt-4 mt-2 border-t border-slate-100">
+
+            <div className="pt-4 mt-2 border-t border-[#20261F]/10">
               {isAuthenticated ? (
                 <button
                   onClick={() => { handleLogout(); setIsOpen(false); }}
-                  className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-slate-100 text-slate-700 rounded-xl font-semibold"
+                  className="font-body w-full flex items-center justify-center space-x-2 px-4 py-3 bg-[#20261F]/5 text-[#20261F] rounded-xl font-semibold"
                 >
                   <FiLogOut />
                   <span>Logout</span>
@@ -166,7 +180,7 @@ const Navbar = () => {
               ) : (
                 <button
                   onClick={() => { navigate('/login'); setIsOpen(false); }}
-                  className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-rose-500 text-white rounded-xl font-semibold"
+                  className="font-body w-full flex items-center justify-center space-x-2 px-4 py-3 bg-[#B84A32] text-[#F7F3E8] rounded-xl font-semibold"
                 >
                   <FiUser />
                   <span>Login</span>
@@ -177,13 +191,13 @@ const Navbar = () => {
         </div>
       )}
 
-      {/* Simplified Clean Login Modal */}
+      {/* Login Modal */}
       {showLoginModal && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl p-6 w-full max-w-md relative shadow-2xl">
+        <div className="fixed inset-0 bg-[#20261F]/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-[#F7F3E8] rounded-sm p-6 w-full max-w-md relative shadow-2xl border border-[#20261F]/10">
             <button
               onClick={() => navigate('/')}
-              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-2xl transition-colors"
+              className="absolute top-4 right-4 text-[#4A6154] hover:text-[#20261F] text-2xl transition-colors"
             >
               &times;
             </button>

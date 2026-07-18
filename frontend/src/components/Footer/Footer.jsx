@@ -1,6 +1,15 @@
 import React, { useState } from 'react';
 import { socialIcons } from '../../assets/dummydata';
 
+/**
+ * Mealzy — Footer
+ * -----------------------------------------------------------------
+ * Same system as the rest of the site. Dark surface is now the brand
+ * forest green (#22332A, a darker step of #2F4A3C) instead of generic
+ * slate-900, so the footer still reads as "Mealzy" and not as a
+ * default Tailwind dark section. Logic unchanged.
+ */
+
 const navItems = [
   { name: 'Home', link: '/' },
   { name: 'Menu', link: '/menu' },
@@ -18,31 +27,41 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-slate-900 text-slate-400 py-16 px-4 sm:px-8">
+    <footer className="bg-[#22332A] text-[#B8C4BB] py-16 px-4 sm:px-8">
+      <style>{`
+        .font-display { font-family: 'Fraunces', Georgia, serif; }
+        .font-body { font-family: 'Work Sans', system-ui, sans-serif; }
+        .font-ticket { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
+      `}</style>
+
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
-          
+
           {/* Brand & Newsletter */}
           <div className="space-y-4">
-            <h2 className="text-3xl font-bold text-white tracking-tight">
-              Mealzy<span className="text-rose-500">.</span>
+            <h2 className="font-display text-3xl font-bold text-[#F7F3E8] tracking-tight">
+              Mealzy<span className="text-[#E7A73E]">.</span>
             </h2>
-            <p className="text-slate-400 max-w-sm leading-relaxed">
-              Bringing your favorite local flavors straight to your door. Fast, fresh, and always delicious.
+            <p className="font-body text-[#B8C4BB] max-w-sm leading-relaxed">
+              Bringing your favorite local flavors straight to your door.
+              Fast, fresh, and always delicious.
             </p>
-            
-            <form onSubmit={handleSubmit} className="flex pt-4 max-w-sm">
+
+            <span className="font-ticket block text-xs uppercase tracking-[0.2em] text-[#E7A73E] pt-2">
+              Join the mailing list
+            </span>
+            <form onSubmit={handleSubmit} className="flex max-w-sm">
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email address"
-                className="w-full px-4 py-3 bg-slate-800 text-slate-100 rounded-l-xl border border-slate-700 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 transition-colors placeholder-slate-500"
+                className="font-body w-full px-4 py-3 bg-[#1A271F] text-[#F7F3E8] rounded-sm border border-[#F7F3E8]/15 focus:outline-none focus:border-[#E7A73E] focus:ring-1 focus:ring-[#E7A73E] transition-colors placeholder-[#B8C4BB]/50"
                 required
               />
               <button
                 type="submit"
-                className="px-6 py-3 bg-rose-500 hover:bg-rose-600 text-white font-medium rounded-r-xl transition-colors"
+                className="font-body px-6 py-3 bg-[#B84A32] hover:bg-[#9E3E29] text-[#F7F3E8] font-medium rounded-sm ml-2 transition-colors"
               >
                 Subscribe
               </button>
@@ -51,13 +70,15 @@ const Footer = () => {
 
           {/* Navigation Links */}
           <div className="md:justify-self-center">
-            <h3 className="text-lg font-semibold text-white mb-6">Quick Links</h3>
+            <span className="font-ticket block text-xs uppercase tracking-[0.2em] text-[#E7A73E] mb-6">
+              Quick links
+            </span>
             <ul className="space-y-3">
               {navItems.map((item) => (
                 <li key={item.name}>
-                  <a 
-                    href={item.link} 
-                    className="hover:text-rose-400 transition-colors font-medium"
+                  <a
+                    href={item.link}
+                    className="font-body hover:text-[#E7A73E] transition-colors font-medium"
                   >
                     {item.name}
                   </a>
@@ -68,15 +89,17 @@ const Footer = () => {
 
           {/* Socials */}
           <div className="md:justify-self-end">
-            <h3 className="text-lg font-semibold text-white mb-6">Connect With Us</h3>
-            <div className="flex space-x-5">
+            <span className="font-ticket block text-xs uppercase tracking-[0.2em] text-[#E7A73E] mb-6">
+              Connect with us
+            </span>
+            <div className="flex space-x-4">
               {socialIcons.map(({ icon: Icon, link }, idx) => (
                 <a
                   key={idx}
                   href={link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-3 bg-slate-800 rounded-full text-slate-300 hover:bg-rose-500 hover:text-white transition-all duration-300"
+                  className="p-3 bg-[#1A271F] rounded-full text-[#B8C4BB] hover:bg-[#B84A32] hover:text-[#F7F3E8] transition-all duration-300"
                   aria-label="Social Link"
                 >
                   <Icon className="text-xl" />
@@ -84,13 +107,12 @@ const Footer = () => {
               ))}
             </div>
           </div>
-          
+
         </div>
 
         {/* Bottom Copyright Bar */}
-        <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
-          <p>© {new Date().getFullYear()} Mealzy. All rights reserved.</p>
-          
+        <div className="font-ticket text-xs uppercase tracking-wide border-t border-[#F7F3E8]/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p>&copy; {new Date().getFullYear()} Mealzy. All rights reserved.</p>
         </div>
       </div>
     </footer>
