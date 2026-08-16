@@ -1,38 +1,68 @@
 // src/components/AdminNavbar.jsx
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import {
-  FiMenu,
-  FiX
-} from 'react-icons/fi';
+import { FiMenu, FiX, FiPlusSquare, FiList, FiClipboard } from 'react-icons/fi';
 import { GiChefToque } from 'react-icons/gi';
-import { styles, navLinks } from '../../assets/dummyadmin';
+
+/**
+ * Mealzy — Admin Navbar
+ * -----------------------------------------------------------------
+ * Admin panel uses a dark "back of house" variant of the same
+ * kitchen-ticket system used on the customer-facing pages (same
+ * forest/saffron/brick palette and fonts, just inverted — dark
+ * surface, ivory text) so it still feels like Mealzy, not a
+ * generic admin dashboard template.
+ *
+ * This no longer reads `styles` / `navLinks` from dummyadmin.js —
+ * everything needed is self-contained here. Update the `href`
+ * values below if your actual admin routes differ.
+ */
+
+const navLinks = [
+  { name: 'Add Item', href: '/admin/add-item', icon: <FiPlusSquare /> },
+  { name: 'Manage Menu', href: '/admin/items', icon: <FiList /> },
+  { name: 'Orders', href: '/admin/orders', icon: <FiClipboard /> },
+];
 
 const AdminNavbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <nav className={styles.navWrapper}>
-      <div className={styles.navContainer}>
-        <div className={styles.logoSection}>
-          <GiChefToque className={styles.logoIcon} />
-          <span className={styles.logoText}>Admin Panel</span>
+    <nav className="bg-[#22332A] border-b border-[#F7F3E8]/10 sticky top-0 z-50">
+      <style>{`
+        .font-display { font-family: 'Fraunces', Georgia, serif; }
+        .font-body { font-family: 'Work Sans', system-ui, sans-serif; }
+        .font-ticket { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
+      `}</style>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-18 py-3">
+        {/* Logo */}
+        <div className="flex items-center gap-2">
+          <GiChefToque className="text-2xl text-[#E7A73E]" />
+          <span className="font-ticket text-xs uppercase tracking-[0.2em] text-[#F7F3E8]">
+            Mealzy &mdash; Admin Panel
+          </span>
         </div>
 
+        {/* Mobile Toggle */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className={styles.menuButton}
+          className="lg:hidden text-[#F7F3E8] p-2 text-xl"
         >
           {menuOpen ? <FiX /> : <FiMenu />}
         </button>
 
-        <div className={styles.desktopMenu}>
+        {/* Desktop Menu */}
+        <div className="hidden lg:flex items-center gap-1">
           {navLinks.map(link => (
             <NavLink
               key={link.name}
               to={link.href}
               className={({ isActive }) =>
-                `${styles.navLinkBase} ${isActive ? styles.navLinkActive : styles.navLinkInactive
+                `font-body flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'bg-[#E7A73E]/15 text-[#E7A73E]'
+                    : 'text-[#B8C4BB] hover:bg-[#F7F3E8]/5 hover:text-[#F7F3E8]'
                 }`
               }
             >
@@ -43,15 +73,19 @@ const AdminNavbar = () => {
         </div>
       </div>
 
+      {/* Mobile Menu */}
       {menuOpen && (
-        <div className={styles.mobileMenu}>
+        <div className="lg:hidden px-4 pb-4 space-y-1 border-t border-[#F7F3E8]/10 pt-3">
           {navLinks.map(link => (
             <NavLink
               key={link.name}
               to={link.href}
               onClick={() => setMenuOpen(false)}
               className={({ isActive }) =>
-                `${styles.navLinkBase} ${isActive ? styles.navLinkActive : styles.navLinkInactive
+                `font-body flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'bg-[#E7A73E]/15 text-[#E7A73E]'
+                    : 'text-[#B8C4BB] hover:bg-[#F7F3E8]/5'
                 }`
               }
             >
