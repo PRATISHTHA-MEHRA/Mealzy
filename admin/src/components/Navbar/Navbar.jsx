@@ -14,14 +14,15 @@ import { GiChefToque } from 'react-icons/gi';
  * generic admin dashboard template.
  *
  * This no longer reads `styles` / `navLinks` from dummyadmin.js —
- * everything needed is self-contained here. Update the `href`
- * values below if your actual admin routes differ.
+ * everything needed is self-contained here. Paths match this app's
+ * own router (App.js): "/" = Add Item, "/list" = Manage Menu,
+ * "/orders" = Orders.
  */
 
 const navLinks = [
-  { name: 'Add Item', href: '/admin/add-item', icon: <FiPlusSquare /> },
-  { name: 'Manage Menu', href: '/admin/items', icon: <FiList /> },
-  { name: 'Orders', href: '/admin/orders', icon: <FiClipboard /> },
+  { name: 'Add Item', href: '/', icon: <FiPlusSquare /> },
+  { name: 'Manage Menu', href: '/list', icon: <FiList /> },
+  { name: 'Orders', href: '/orders', icon: <FiClipboard /> },
 ];
 
 const AdminNavbar = () => {
