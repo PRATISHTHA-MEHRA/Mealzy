@@ -20,8 +20,8 @@ const loginUser = async (req, res) => {
         }
 
         // IF PASSWORD MATCHES WE GENERATE TOKENS
-        const token = createToken(user._id);
-        res.json({ success: true, token })
+        const token = createToken(user._id, user.role);
+        res.json({ success: true, token, role: user.role, username: user.username })
     }
     catch (error) {
         console.log(error);
@@ -29,8 +29,8 @@ const loginUser = async (req, res) => {
     }
 }
 
-const createToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET)
+const createToken = (id, role) => {
+    return jwt.sign({ id, role }, process.env.JWT_SECRET)
 }
 
 // REGISTER USER
@@ -57,7 +57,9 @@ const registerUser = async (req, res) => {
         const salt = await bycrypt.genSalt(10)
         const hashedPassword = await bycrypt.hash(password, salt);
 
-        // NEW USER 
+        // NEW USER — role is never taken from the request body, so
+        // registration can never create an admin. Every signup here
+        // gets the schema default ('customer').
         const newUser = new userModel({
             username: username,
             email: email,
@@ -67,8 +69,8 @@ const registerUser = async (req, res) => {
         const user = await newUser.save()
 
         // CREATE A TOKEN (ABOVE ||)AND SEND IT TO USER USING RESPONSE
-        const token = createToken(user._id)
-        res.json({ success: true, token })
+        const token = createToken(user._id, user.role)
+        res.json({ success: true, token, role: user.role, username: user.username })
 
     }
 
